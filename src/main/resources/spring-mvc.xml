@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xmlns:context="http://www.springframework.org/schema/context"  
+       xmlns:mvc="http://www.springframework.org/schema/mvc" 
+       xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+    					http://www.springframework.org/schema/beans/spring-beans.xsd  
+        				http://www.springframework.org/schema/context 
+        				http://www.springframework.org/schema/context/spring-context.xsd  
+         				http://www.springframework.org/schema/mvc 
+         				http://www.springframework.org/schema/mvc/spring-mvc.xsd  
+         				http://www.directwebremoting.org/schema/spring-dwr 
+         				http://directwebremoting.org/schema/spring-dwr-3.0.xsd">  
+    <!-- 自动扫描该包，使SpringMVC认为包下用了@controller注解的类是控制器 -->
+    <context:component-scan base-package="com.dragonsoftbravo" />
+    <!-- 创建一个dwr controller用来映射dwr请求 -->  
+	<bean id="msgController" class="com.dragonsoftbravo.dwr.MsgController"></bean>    
+    <!-- 静态资源 -->
+    <mvc:resources mapping="/js/**" location="/js/" />
+	<mvc:resources mapping="/static/**" location="/static/" />
+	<mvc:resources mapping="/images/**" location="/images/" />
+    <mvc:annotation-driven>
+    	 <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+            	<constructor-arg value="UTF-8"></constructor-arg>
+            </bean>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+   </mvc:message-converters>
+    </mvc:annotation-driven>  
+    <!--避免IE执行AJAX时，返回JSON出现下载文件-->
+    <bean id="mappingJacksonHttpMessageConverter"
+        class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/html;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean> 
+    <mvc:interceptors>
+    	<mvc:interceptor>
+    		<mvc:mapping path="/user/**"/>
+    		<bean class="com.dragonsoftbravo.filter.LoginFilter"></bean>
+    	</mvc:interceptor>
+    </mvc:interceptors>
+    <!-- 定义跳转的文件的前后缀 ，视图模式配置-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- 这里的配置我的理解是自动给后面action的方法return的字符串加上前缀和后缀，变成一个 可用的url地址 -->
+        <property name="prefix" value="/WEB-INF/jsp/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+
+</beans>
