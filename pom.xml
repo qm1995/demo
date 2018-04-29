@@ -5,6 +5,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
   
+  
  <properties>
     <!--解决 Maven3 中文编译乱码-->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
