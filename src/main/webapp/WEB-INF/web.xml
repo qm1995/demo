@@ -68,7 +68,7 @@
       </init-param>
       <init-param>    
            <param-name>org.directwebremoting.extend.ScriptSessionManager</param-name >   
-           <param-value>com.dragonsoftbravo.dwr.DWRScriptSessionManager</param-value >  
+           <param-value>com.qm.dwr.DWRScriptSessionManager</param-value >  
       </init-param> 
  </servlet>
   <servlet-mapping>

@@ -16,7 +16,7 @@
             -->  
       <param name="beanName" value="msgController"/>
     </create>
-    <convert match="com.dragonsoftbravo.pojo.Message" converter="bean"></convert>
-    <convert match="com.dragonsoftbravo.pojo.User" converter="bean"></convert>
+    <convert match="com.qm.pojo.Message" converter="bean"></convert>
+    <convert match="com.qm.pojo.User" converter="bean"></convert>
   </allow>
 </dwr>

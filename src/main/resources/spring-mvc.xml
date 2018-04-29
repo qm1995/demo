@@ -13,9 +13,9 @@
          				http://www.directwebremoting.org/schema/spring-dwr 
          				http://directwebremoting.org/schema/spring-dwr-3.0.xsd">  
     <!-- 自动扫描该包，使SpringMVC认为包下用了@controller注解的类是控制器 -->
-    <context:component-scan base-package="com.dragonsoftbravo" />
+    <context:component-scan base-package="com.qm" />
     <!-- 创建一个dwr controller用来映射dwr请求 -->  
-	<bean id="msgController" class="com.dragonsoftbravo.dwr.MsgController"></bean>    
+	<bean id="msgController" class="com.qm.dwr.MsgController"></bean>    
     <!-- 静态资源 -->
     <mvc:resources mapping="/js/**" location="/js/" />
 	<mvc:resources mapping="/static/**" location="/static/" />
@@ -40,7 +40,7 @@
     <mvc:interceptors>
     	<mvc:interceptor>
     		<mvc:mapping path="/user/**"/>
-    		<bean class="com.dragonsoftbravo.filter.LoginFilter"></bean>
+    		<bean class="com.qm.filter.LoginFilter"></bean>
     	</mvc:interceptor>
     </mvc:interceptors>
     <!-- 定义跳转的文件的前后缀 ，视图模式配置-->
