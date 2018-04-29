@@ -116,7 +116,7 @@
 								style="height:16px; padding-top:4px;" />
 						</div>
 						<div style="float: left;">
-							<i><img style="height:22px;" id="codeImg" alt="点击更换" title="点击更换" src="" /></i>
+							<i><img style="height:26px;" id="codeImg" alt="点击更换" title="点击更换" src="" /></i>
 						</div>
 						<c:if test="${pd.isZhuce == 'yes' }">
 						<span class="pull-right" style="padding-right:3%;"><a href="javascript:changepage(1);" class="btn btn-success">注册</a></span>
@@ -211,7 +211,7 @@
 								style="height:16px; padding-top:4px;" />
 						</div>
 						<div style="float: left;">
-							<i><img style="height:22px;" id="zcodeImg" alt="点击更换" title="点击更换" src="" /></i>
+							<i><img style="height:26px;" id="zcodeImg" alt="点击更换" title="点击更换" src=""/></i>
 						</div>
 						<span class="pull-right" style="padding-right:3%;"><a href="javascript:changepage(2);" class="btn btn-success">取消</a></span>
 						<span class="pull-right"><a onclick="register();" class="flip-link btn btn-info" id="to-recover">提交</a></span>
@@ -240,8 +240,12 @@
 	</div>
 
 	<script type="text/javascript">
+	
+		//验证码
+		
 		//服务器校验
 		function severCheck(){
+			changeCode1();
 			if(check()){
 				var loginname = $("#loginname").val();
 				var password = $("#password").val();
@@ -310,10 +314,10 @@
 		}
 
 		function changeCode1() {
-			$("#codeImg").attr("src", "code.do?t=" + genTimestamp());
+			$("#codeImg").attr("src", "${pageContext.request.contextPath}/login/getCodeImage.html?t=" + genTimestamp());
 		}
 		function changeCode2() {
-			$("#zcodeImg").attr("src", "code.do?t=" + genTimestamp());
+			$("#zcodeImg").attr("src", "${pageContext.request.contextPath}/login/getCodeImage.html?t=" + genTimestamp());
 		}
 
 		//客户端校验
@@ -405,16 +409,23 @@
 			if(value == 1){
 				$("#windows1").hide();
 				$("#windows2").show();
+				$("#windows2 input").each(function(){
+					$(this).val('');
+				});
 				changeCode2();
 			}else{
 				$("#windows2").hide();
 				$("#windows1").show();
+				$("#windows1 input").each(function(){
+					$(this).val('');
+				});
 				changeCode1();
 			}
 		}
 		
 	//注册
 	function rcheck(){
+		changeCode2();
 		if($("#USERNAME").val()==""){
 			$("#USERNAME").tips({
 				side:3,
