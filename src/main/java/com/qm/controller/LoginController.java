@@ -37,7 +37,12 @@ public class LoginController {
 	 */
 	@RequestMapping(value="/register",method=RequestMethod.POST)
 	@ResponseBody
-	public ActionResult registerUser(User user,@RequestParam("password") String password) {
+	public ActionResult registerUser(User user,@RequestParam("password") String password
+			,HttpServletRequest request,@RequestParam("code") String code) {
+		String c = (String) request.getSession().getAttribute("code");
+		if(code == null || !code.equalsIgnoreCase(c)){
+			return ActionResult.build(303, "验证码错误");
+		}
 		try {
 			user.setPwd(password);
 			userService.registerUser(user);
@@ -60,7 +65,14 @@ public class LoginController {
 	@RequestMapping(value="/login",method=RequestMethod.POST)
 	@ResponseBody
 	public ActionResult checkUser(@RequestParam("username") String username,
-								@RequestParam("password") String pwd,HttpServletRequest request) {
+								@RequestParam("password") String pwd,
+								HttpServletRequest request,@RequestParam("code") String code,
+								boolean isSavePwd) {
+		System.out.println(isSavePwd);
+		String c = (String) request.getSession().getAttribute("code");
+		if(code == null || !code.equalsIgnoreCase(c)){
+			return ActionResult.build(303, "验证码错误");
+		}
 		ActionResult result = userService.login(username, pwd);
 		if(result.getStatusCode() == 200) {
 			User user = (User) result.getResult();

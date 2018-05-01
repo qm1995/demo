@@ -16,6 +16,8 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.qm.util.ActionResult;
@@ -106,12 +108,14 @@ public class IdentifyCode {
 		return code.toString();
 	}
 	
-	@RequestMapping("/login/getCodeNum")
+	@RequestMapping(value="/login/getCodeNum",method=RequestMethod.POST)
 	@ResponseBody
-	public String getCodeNum(HttpServletRequest request){
+	public ActionResult getCodeNum(HttpServletRequest request,@RequestParam("code") String c){
 		HttpSession session = request.getSession();
 		String code = (String) session.getAttribute("code");
-		
-		return code;
+		if(c == null || !c.equalsIgnoreCase(code)){
+			return ActionResult.build(303, "验证码错误");
+		}
+		return ActionResult.Ok("验证码正确");
 	}
 }

@@ -102,7 +102,7 @@
 					</div>
 					<div style="float: left;">
 						<input name="form-field-checkbox" id="saveid" type="checkbox"
-							onclick="savePaw();" style="padding-top:0px;" />
+							 style="padding-top:0px;" />
 					</div>
 				</div>
 				<div class="form-actions">
@@ -135,7 +135,7 @@
 		<!-- 注册 -->
 		<div id="windows2" style="display: none;">
 		<div id="loginbox">
-			<form action="" method="post" name="loginForm" id="loginForm">
+			<form action="" method="post" name="registerForm" id="registerForm">
 				<div class="control-group normal_text">
 					<h3>
 						<img src="${pageContext.request.contextPath}/static/login/logo.png" alt="Logo" />
@@ -214,7 +214,7 @@
 							<i><img style="height:26px;" id="zcodeImg" alt="点击更换" title="点击更换" src=""/></i>
 						</div>
 						<span class="pull-right" style="padding-right:3%;"><a href="javascript:changepage(2);" class="btn btn-success">取消</a></span>
-						<span class="pull-right"><a onclick="register();" class="flip-link btn btn-info" id="to-recover">提交</a></span>
+						<span class="pull-right"><a onclick="register();" class="flip-link btn btn-info" id="to-recover">注册</a></span>
 					</div>
 				</div>
 			</form>
@@ -240,29 +240,60 @@
 	</div>
 
 	<script type="text/javascript">
-	
+		var path = '${pageContext.request.contextPath}';
+		var url={
+				loginUrl:path+"/login.action",
+				loginSuc:path+"/user/home.html",
+				registerUrl:path+"/register.action",
+				getCodeUrl:path+"/login/getCodeNum.action",
+		};
 		//验证码
-		
+		function checkCode(code){
+			var flag = false;
+			$.ajax({
+				url:url.getCodeUrl,
+				type:'post',
+				async: false,
+				data:{
+					code:code
+				},
+				success:function(data){
+					if(data.statusCode == 200){
+						flag = true;
+					}
+				}
+			});
+			return flag;
+		}
 		//服务器校验
 		function severCheck(){
-			changeCode1();
 			if(check()){
+				if(!checkCode($("#code").val())){
+					changeCode1();
+					$("#code").tips({
+						side : 1,
+						msg : "验证码有误",
+						bg : '#FF5080',
+						time : 15
+					});
+					return;
+				}
 				var loginname = $("#loginname").val();
 				var password = $("#password").val();
-				var code = loginname+","+password+","+$("#code").val();
+				var code = $("#code").val();
 				$.ajax({
 					type: "post",
-					url: '/demo/login.action',
+					url: url.loginUrl,
 			    	data: {
 			    		username:loginname,
-			    		password:password
+			    		password:password,
+			    		code:code,
+			    		isSavePwd:$("#saveid").val()
 			    	},
 					cache: false,
 					success: function(data){
 						if(200 == data.statusCode){
-							saveCookie();
-							//alert("登陆成功")
-							window.location.href="/demo/user/home.html";
+							window.location.href=url.loginSuc;
 						}else if(400 == data.statusCode){
 							$("#loginname").tips({
 								side : 1,
@@ -270,16 +301,14 @@
 								bg : '#FF5080',
 								time : 15
 							});
-							showfh();
 							$("#loginname").focus();
-						}else if("codeerror" == data.result){
+						}else if(303 == data.statusCode){
 							$("#code").tips({
 								side : 1,
-								msg : "验证码输入有误",
+								msg : "验证码有误",
 								bg : '#FF5080',
 								time : 15
 							});
-							showfh();
 							$("#code").focus();
 						}else{
 							$("#loginname").tips({
@@ -288,7 +317,6 @@
 								bg : '#FF5080',
 								time : 15
 							});
-							showfh();
 							$("#loginname").focus();
 						}
 					}
@@ -347,17 +375,16 @@
 				$("#password").focus();
 				return false;
 			}
-			/* if ($("#code").val() == "") {
+		   if ($("#code").val() == "") {
 				$("#code").tips({
 					side : 1,
 					msg : '验证码不得为空',
 					bg : '#AE81FF',
 					time : 3
 				});
-				showfh();
 				$("#code").focus();
 				return true;
-			} */
+			}
 			$("#loginbox").tips({
 				side : 1,
 				msg : '正在登录 , 请稍后 ...',
@@ -367,43 +394,6 @@
 
 			return true;
 		}
-
-		function savePaw() {
-			if (!$("#saveid").attr("checked")) {
-				$.cookie('loginname', '', {
-					expires : -1
-				});
-				$.cookie('password', '', {
-					expires : -1
-				});
-				$("#loginname").val('');
-				$("#password").val('');
-			}
-		}
-
-		function saveCookie() {
-			if ($("#saveid").attr("checked")) {
-				$.cookie('loginname', $("#loginname").val(), {
-					expires : 7
-				});
-				$.cookie('password', $("#password").val(), {
-					expires : 7
-				});
-			}
-		}
-		
-		jQuery(function() {
-			var loginname = $.cookie('loginname');
-			var password = $.cookie('password');
-			if (typeof(loginname) != "undefined"
-					&& typeof(password) != "undefined") {
-				$("#loginname").val(loginname);
-				$("#password").val(password);
-				$("#saveid").attr("checked", true);
-				$("#code").focus();
-			}
-		});
-		
 		//登录注册页面切换
 		function changepage(value) {
 			if(value == 1){
@@ -459,16 +449,6 @@
 			$("#chkpwd").focus();
 			return false;
 		}
-		/* if($("#AGE").val()==""){
-			$("#AGE").tips({
-				side:3,
-	            msg:'输入姓名',
-	            bg:'#AE81FF',
-	            time:3
-	        });
-			$("#name").focus();
-			return false;
-		} */
 		if($("#AGE").val()==""){
 			$("#AGE").tips({
 				side:3,
@@ -488,7 +468,7 @@
 			$("#AGE").focus();
 			return false;
 		}
-		/* if ($("#rcode").val() == "") {
+	   if ($("#rcode").val() == "") {
 			$("#rcode").tips({
 				side : 1,
 				msg : '验证码不得为空',
@@ -497,21 +477,33 @@
 			});
 			$("#rcode").focus();
 			return false;
-		} */
+		}
 		return true;
 	}
 	
 	//提交注册
 	function register(){
 		if(rcheck()){
+			var code = $("#rcode").val();
+			if(!checkCode(code)){
+				changeCode2();
+				$("#rcode").tips({
+					side : 1,
+					msg : "验证码有误",
+					bg : '#FF5080',
+					time : 15
+				});
+				return;
+			}
 			$.ajax({
 				type: "post",
-				url: '/demo/register.action',
+				url: url.registerUrl,
 		    	data: {
 		    		  username:$("#USERNAME").val(),
 		    		  password:$("#PASSWORD").val(),
 		    		  sex:$("#SEX").val(),
-		    		  age:$("#AGE").val()
+		    		  age:$("#AGE").val(),
+		    		  code:code
 		        },
 				cache: false,
 				success: function(data){
@@ -532,16 +524,14 @@
 							bg : '#FF5080',
 							time : 15
 						});
-						showfh();
 						$("#USERNAME").focus();
-					}else if("06" == data.result){
+					}else if(303 == data.statusCode){
 						$("#rcode").tips({
 							side : 1,
-							msg : "验证码输入有误",
+							msg : "验证码有误",
 							bg : '#FF5080',
 							time : 15
 						});
-						showfh();
 						$("#rcode").focus();
 					}
 				}
@@ -564,12 +554,6 @@
 	<script src="${pageContext.request.contextPath}/static/login/js/ban.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jQuery.md5.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.tips.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.cookie.js"></script>
-	
-	<!-- 软键盘控件start -->
-	<script type="text/javascript" src="${pageContext.request.contextPath}/static/login/keypad/js/form/keypad.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/static/login/keypad/js/framework.js"></script>
-	<!-- 软键盘控件end -->
 </body>
 
 </html>
