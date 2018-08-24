@@ -75,8 +75,4 @@
     <servlet-name>dwr-invoker</servlet-name>
     <url-pattern>/dwr/*</url-pattern>
   </servlet-mapping>
-  <error-page>
-  	<error-code>404</error-code>
-  	<location>/WEB-INF/error404.jsp</location>
-  </error-page>
 </web-app>
