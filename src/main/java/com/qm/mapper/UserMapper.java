@@ -31,4 +31,6 @@ public interface UserMapper {
     int updateByPrimaryKey(User record);
     
     List<User> findFriendsById(Integer uid);
+
+    List<User> findByIds(@Param("uid") Integer id1,@Param("fid") Integer id2);
 }
